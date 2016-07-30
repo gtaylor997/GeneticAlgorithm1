@@ -1,4 +1,4 @@
-import org.newdawn.slick.Graphics;
+import java.awt.Graphics;
 
 public class Food {
 
@@ -6,11 +6,11 @@ public class Food {
 	private Point pos;
 
 	private Food() {
-		setPos(GeneticAlgorithm1.getRandomPos());
+		setPos(Simulator.getRandomPos());
 	}
 
 	public void eat() {
-		setPos(GeneticAlgorithm1.getRandomPos());
+		setPos(Simulator.getRandomPos());
 	}
 
 	public Point getPos() {

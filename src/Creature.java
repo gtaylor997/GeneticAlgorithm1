@@ -1,5 +1,5 @@
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class Creature {
 
@@ -27,7 +27,7 @@ public class Creature {
 	 * The default constructor for a new creature
 	 */
 	public Creature() {
-		setPos(GeneticAlgorithm1.getRandomPos());
+		setPos(Simulator.getRandomPos());
 
 		for (int i = 0; i < STATE_COUNT; i++) {
 			for (int j = 0; j < PERCEPT_COUNT; j++) {
@@ -84,9 +84,9 @@ public class Creature {
 	 * @return The value of the percept
 	 */
 	private int getPercept() {
-		Food closest = GeneticAlgorithm1.food.get(0);
+		Food closest = Simulator.food.get(0);
 		double distance = Utils.getDistance(closest.getPos(), getPos());
-		for (Food f : GeneticAlgorithm1.food) {
+		for (Food f : Simulator.food) {
 			double c = Utils.getDistance(f.getPos(), getPos());
 			if (c < distance) {
 				distance = c;
@@ -109,7 +109,7 @@ public class Creature {
 		int max = (STATE_COUNT * 3) + 2;
 		for (int i = 0; i < STATE_COUNT; i++) {
 			for (int j = 0; j < PERCEPT_COUNT; j++) {
-				int mod = (int) (modificationFunction(max) * GeneticAlgorithm1.mutationFunction());
+				int mod = (int) (modificationFunction(max) * Simulator.mutationFunction());
 				genes[i][j] += mod;
 			}
 		}
