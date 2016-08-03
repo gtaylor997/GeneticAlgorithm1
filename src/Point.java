@@ -19,6 +19,11 @@ public class Point {
 		this.setY(y);
 	}
 
+	public Point(java.awt.Point point) {
+		this.setX((int) point.getX());
+		this.setY((int) point.getY());
+	}
+
 	/**
 	 * Get the y position of the point
 	 * @return The y value

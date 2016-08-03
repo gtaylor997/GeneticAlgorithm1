@@ -22,6 +22,7 @@ public class Food {
 	}
 
 	public void draw(Graphics g) {
+		g.setColor(Colors.FOOD);
 		g.drawOval(pos.getX() - SIZE / 2, pos.getY() - SIZE / 2, SIZE, SIZE);
 	}
 

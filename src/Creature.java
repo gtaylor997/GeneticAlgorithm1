@@ -25,6 +25,7 @@ public class Creature {
 	private int state = 0;
 
 	private int[][] genes = new int[STATE_COUNT][PERCEPT_COUNT];
+	private boolean active;
 
 	/**
 	 * The default constructor for a new creature
@@ -187,8 +188,6 @@ public class Creature {
 	}
 
 	public void draw(Graphics g) {
-		g.setColor(Colors.CREATURE);
-		g.drawOval(getPos().getX() - SIZE / 2, getPos().getY() - SIZE / 2, SIZE, SIZE);
 
 		for (Food f : Simulator.food) {
 			if (Utils.getDistance(pos, f.getPos()) < VIEW_RANGE) {
@@ -207,11 +206,20 @@ public class Creature {
 			}
 		}
 
+		g.setColor(Colors.CREATURE);
+		if (active) {
+			g.drawString(String.format("%.0f", angle), getPos().getX() + 8, getPos().getY() - 13);
+			g.drawString(String.format("%d", state), getPos().getX() + 15, getPos().getY());
+		}
+
+		if (active) {
+			g.setColor(Colors.CREATURE_ACTIVE);
+		}
+		g.drawOval(getPos().getX() - SIZE / 2, getPos().getY() - SIZE / 2, SIZE, SIZE);
 		int dx = (int) ((SIZE / 2 * Math.cos(Math.toRadians(angle))) + getPos().getX());
 		int dy = (int) ((SIZE / 2 * Math.sin(Math.toRadians(angle))) + getPos().getY());
-		g.setColor(Colors.CREATURE);
 		g.drawLine(getPos().getX(), getPos().getY(), dx, dy);
-		g.drawString(String.format("%f", angle), getPos().getX(), getPos().getY());
+
 	}
 
 	public Point getPos() {
@@ -224,6 +232,11 @@ public class Creature {
 
 	public void eat() {
 		energy += FOOD_ENERGY;
+	}
+
+	public void setActive(boolean a) {
+		active = a;
+
 	}
 
 }

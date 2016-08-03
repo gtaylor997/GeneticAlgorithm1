@@ -1,12 +1,16 @@
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Simulator extends Canvas implements Runnable {
+public class Simulator extends Canvas implements Runnable, MouseListener, MouseMotionListener, KeyListener {
 
 	private static final long serialVersionUID = 8928103048763069612L;
 	public static int WIDTH = 1200;
@@ -23,11 +27,15 @@ public class Simulator extends Canvas implements Runnable {
 
 	private int desiredFPS = 50;
 	private long desiredDeltaLoop = (1000 * 1000 * 1000) / desiredFPS;
+	private boolean paused;
 	private static int timeStep = 0;
 
 	// private BufferStrategy bufferStrategy;
 
 	public Simulator() {
+		addMouseListener(this);
+		addMouseMotionListener(this);
+		addKeyListener(this);
 		Utils.rand = new Random();
 		creatures = new ArrayList<Creature>();
 		food = new ArrayList<Food>();
@@ -136,6 +144,15 @@ public class Simulator extends Canvas implements Runnable {
 			currentUpdateTime = System.nanoTime();
 			update();
 
+			while (paused) {
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 			endLoopTime = System.nanoTime();
 			deltaLoop = endLoopTime - beginLoopTime;
 
@@ -153,6 +170,66 @@ public class Simulator extends Canvas implements Runnable {
 
 	public BufferStrategy getBufferStrategy() {
 		return super.getBufferStrategy();
+	}
+
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseClicked(MouseEvent arg0) {
+		System.out.println("Mouse Clicked");
+	}
+
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mousePressed(MouseEvent arg0) {
+		System.out.println("Mouse pressed");
+		for (Creature c : creatures) {
+			if (Utils.getDistance(new Point(arg0.getPoint()), c.getPos()) < Creature.SIZE) {
+				c.setActive(true);
+			} else {
+				c.setActive(false);
+			}
+		}
+		render();
+
+	}
+
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void keyPressed(KeyEvent arg0) {
+		System.out.println("Key pressed" + Integer.toString(arg0.getKeyCode()));
+		if (arg0.getKeyCode() == KeyEvent.VK_SPACE) {
+			paused = !paused;
+		}
+
+	}
+
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
