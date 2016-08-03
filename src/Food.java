@@ -2,10 +2,10 @@ import java.awt.Graphics;
 
 public class Food {
 
-	public static int SIZE = 1;
+	public static int SIZE = 5;
 	private Point pos;
 
-	private Food() {
+	public Food() {
 		setPos(Simulator.getRandomPos());
 	}
 

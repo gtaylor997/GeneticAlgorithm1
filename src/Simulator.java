@@ -1,32 +1,45 @@
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Simulator extends Canvas {
+public class Simulator extends Canvas implements Runnable {
 
-	public static int WIDTH;
-	public static int HEIGHT;
+	private static final long serialVersionUID = 8928103048763069612L;
+	public static int WIDTH = 1200;
+	public static int HEIGHT = 800;
 	public static int MID_MUTATION_RATE = 1;
 	public static double STRETCH_MUTATION_RATE = 0.00007;
 	public static int DEATH_PROB = 2000;
 	public static int MIN_CREATURES = 8;
 	public static int MAX_CREATURES = 30;
+	public static int FOOD_COUNT = 40;
 
 	private ArrayList<Creature> creatures;
 	public static ArrayList<Food> food;
 
+	private int desiredFPS = 50;
+	private long desiredDeltaLoop = (1000 * 1000 * 1000) / desiredFPS;
 	private static int timeStep = 0;
+
+	// private BufferStrategy bufferStrategy;
 
 	public Simulator() {
 		Utils.rand = new Random();
 		creatures = new ArrayList<Creature>();
+		food = new ArrayList<Food>();
 		initCreatures();
 	}
 
 	private void initCreatures() {
 		for (int i = 0; i < (MIN_CREATURES + MAX_CREATURES) / 2; i++) {
 			creatures.add(new Creature());
+		}
+		for (int i = 0; i < FOOD_COUNT; i++) {
+			food.add(new Food());
 		}
 	}
 
@@ -77,23 +90,69 @@ public class Simulator extends Canvas {
 				}
 			}
 		}
+		timeStep++;
+	}
+
+	private void render() {
+		paint(getBufferStrategy().getDrawGraphics());
 	}
 
 	public void paint(Graphics g) {
 
-		g.fillRect(0, 0, WIDTH, HEIGHT);
-
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(Colors.BACKGROUND);
+		g2.fillRect(0, 0, WIDTH, HEIGHT);
 		for (Creature c : creatures) {
-			c.draw(g);
+			c.draw(g2);
 		}
 		for (Food f : food) {
-			f.draw(g);
+			f.draw(g2);
 		}
+		g.drawString(Integer.toString(timeStep), 10, 10);
+		g.dispose();
+		getBufferStrategy().show();
 	}
 
 	public void start() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void run() {
+
+		boolean running = true;
+		long beginLoopTime;
+		long endLoopTime;
+		long currentUpdateTime = System.nanoTime();
+		long lastUpdateTime;
+		long deltaLoop;
+
+		while (running) {
+			beginLoopTime = System.nanoTime();
+
+			render();
+
+			lastUpdateTime = currentUpdateTime;
+			currentUpdateTime = System.nanoTime();
+			update();
+
+			endLoopTime = System.nanoTime();
+			deltaLoop = endLoopTime - beginLoopTime;
+
+			if (deltaLoop > desiredDeltaLoop) {
+				// Do nothing. We are already late.
+			} else {
+				try {
+					Thread.sleep((desiredDeltaLoop - deltaLoop) / (1000 * 1000));
+				} catch (InterruptedException e) {
+					// Do nothing
+				}
+			}
+		}
+	}
+
+	public BufferStrategy getBufferStrategy() {
+		return super.getBufferStrategy();
 	}
 
 }
